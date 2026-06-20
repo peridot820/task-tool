@@ -149,7 +149,7 @@ test       vitest
 db:push    prisma db push          # 스키마 → DB 반영
 db:seed    prisma db seed          # 데모 유저 삽입
 db:studio  prisma studio           # DB GUI
-db:reset   prisma migrate reset    # DB 초기화 (학습/실수 복구용)
+db:reset   prisma db push --force-reset && prisma db seed   # DB 비우고 다시 만들기 (학습/실수 복구용)
 ```
 
 테스트: Vitest로 순수 함수 예제 테스트 1~2개 — 예) `password.ts`의 해싱/검증 왕복, zod 검증 스키마 동작.
