@@ -1,7 +1,6 @@
 import { defineConfig } from 'vitest/config'
-import tsconfigPaths from 'vite-tsconfig-paths'
 
 export default defineConfig({
-  plugins: [tsconfigPaths()], // 테스트에서 '@/...' 별칭 사용 가능하게
-  test: { environment: 'node' },
+  test: { environment: 'node' }, // 테스트는 Node 환경에서 실행
+  resolve: { tsconfigPaths: true }, // tsconfig의 @/* 별칭을 네이티브로 해석(플러그인 불필요)
 })
