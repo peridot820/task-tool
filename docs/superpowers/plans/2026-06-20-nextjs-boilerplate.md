@@ -27,6 +27,7 @@
 ## File Structure (생성/수정 대상)
 
 생성:
+
 - `prisma/schema.prisma`, `prisma/seed.ts`
 - `src/lib/prisma.ts`, `src/lib/env.ts`, `src/lib/utils.ts`, `src/lib/forms.ts`
 - `src/features/auth/password.ts` (+ `password.test.ts`), `session.ts`, `validation.ts` (+ `validation.test.ts`), `actions.ts`
@@ -40,6 +41,7 @@
 - `vitest.config.ts`, `.prettierrc`, `.env`, `.env.example`, `README.md`
 
 수정(스캐폴딩이 생성한 파일):
+
 - `src/app/layout.tsx`, `src/app/page.tsx`, `src/app/globals.css`, `package.json`, `.gitignore`
 
 ---
@@ -49,19 +51,23 @@
 ### Task 1: Next.js 스캐폴딩 + 포맷터
 
 **Files:**
+
 - Create(자동): `src/app/*`, `package.json`, `tsconfig.json`, `next.config.ts`, `eslint.config.mjs`, `postcss.config.mjs`, `.gitignore`
 - Create: `.prettierrc`
 - Modify: `package.json`(스크립트), `.gitignore`
 
 **Interfaces:**
+
 - Produces: 동작하는 Next.js 앱(App Router, TS, Tailwind v4, `@/*` 별칭), `npm run dev`/`build`/`lint`/`format` 스크립트.
 
 - [ ] **Step 1: create-next-app 실행 (현재 폴더에)**
 
 `docs/`와 `.git/`은 create-next-app 허용 목록이라 충돌하지 않는다.
+
 ```bash
 npx create-next-app@latest . --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --yes
 ```
+
 프롬프트가 뜨면 위 플래그 값(Turbopack은 기본 Yes)대로 진행한다.
 
 - [ ] **Step 2: 빌드로 스캐폴딩 검증**
@@ -74,7 +80,9 @@ Expected: 에러 없이 빌드 완료(기본 홈페이지 컴파일).
 ```bash
 npm i -D prettier
 ```
+
 Create `.prettierrc`:
+
 ```json
 {
   "semi": false,
@@ -87,6 +95,7 @@ Create `.prettierrc`:
 - [ ] **Step 4: package.json 스크립트 추가**
 
 create-next-app이 만든 `scripts`(dev/build/start/lint)는 **그대로 두고**, 아래 항목만 병합 추가한다. (특히 생성된 `lint` 스크립트가 `next lint`든 `eslint .`든 건드리지 않는다 — Next 버전에 따라 다름.)
+
 ```json
 "format": "prettier --write .",
 "test": "vitest run",
@@ -100,6 +109,7 @@ create-next-app이 만든 `scripts`(dev/build/start/lint)는 **그대로 두고*
 - [ ] **Step 5: .gitignore 조정 (.env는 무시하되 .env.example은 추적)**
 
 `.gitignore`의 env 섹션을 아래로 교체하고, prisma DB 파일을 추가한다.
+
 ```gitignore
 # env files
 .env
@@ -123,10 +133,12 @@ git commit -m "chore: scaffold Next.js app with TS, Tailwind, Prettier"
 ### Task 2: Prisma + SQLite + User 스키마
 
 **Files:**
+
 - Create: `prisma/schema.prisma`, `src/lib/prisma.ts`, `.env`, `.env.example`
 - Modify: `package.json`(prisma seed 설정 위치만 잡아둠)
 
 **Interfaces:**
+
 - Produces: `prisma` 클라이언트 싱글톤(`import { prisma } from '@/lib/prisma'`), `User` 테이블, 환경변수 파일.
 
 - [ ] **Step 1: Prisma 설치**
@@ -139,6 +151,7 @@ npm i @prisma/client
 - [ ] **Step 2: schema.prisma 작성**
 
 Create `prisma/schema.prisma`:
+
 ```prisma
 generator client {
   provider = "prisma-client-js"
@@ -163,11 +176,14 @@ model User {
 - [ ] **Step 3: 환경변수 파일 작성**
 
 Create `.env`:
+
 ```
 DATABASE_URL="file:./dev.db"
 SESSION_SECRET="dev-secret-change-me-to-a-long-random-string-32+"
 ```
+
 Create `.env.example`:
+
 ```
 # DB 연결 문자열 (SQLite: 프로젝트 안 파일)
 DATABASE_URL="file:./dev.db"
@@ -179,6 +195,7 @@ SESSION_SECRET="change-me-to-a-long-random-string-of-32-chars-or-more"
 - [ ] **Step 4: Prisma 클라이언트 싱글톤**
 
 Create `src/lib/prisma.ts`:
+
 ```ts
 import { PrismaClient } from '@prisma/client'
 
@@ -193,6 +210,7 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 - [ ] **Step 5: prisma seed 설정 추가**
 
 `package.json` 최상위에 추가(스크립트와 별개):
+
 ```json
 "prisma": {
   "seed": "tsx prisma/seed.ts"
@@ -202,9 +220,11 @@ if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
 - [ ] **Step 6: DB 생성 + 검증**
 
 Run:
+
 ```bash
 npm run db:push
 ```
+
 Expected: `dev.db` 생성, "Your database is now in sync with your Prisma schema" 출력.
 
 - [ ] **Step 7: 커밋**
@@ -219,9 +239,11 @@ git commit -m "feat: add Prisma + SQLite with User model"
 ### Task 3: 환경변수 검증 + 작은 유틸
 
 **Files:**
+
 - Create: `src/lib/env.ts`, `src/lib/utils.ts`
 
 **Interfaces:**
+
 - Produces: `env`(검증된 환경변수 객체), `cn(...inputs)` 클래스명 합성 헬퍼.
 
 - [ ] **Step 1: zod + 클래스 유틸 의존성 설치**
@@ -233,6 +255,7 @@ npm i zod@^3 clsx tailwind-merge
 - [ ] **Step 2: env.ts 작성**
 
 Create `src/lib/env.ts`:
+
 ```ts
 import { z } from 'zod'
 
@@ -255,6 +278,7 @@ export const env = parsed.data
 - [ ] **Step 3: utils.ts 작성**
 
 Create `src/lib/utils.ts`:
+
 ```ts
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
@@ -284,9 +308,11 @@ git commit -m "feat: add env validation and cn() utility"
 ### Task 4: 비밀번호 해싱 + Vitest 셋업 (TDD, 예제 테스트 1)
 
 **Files:**
+
 - Create: `vitest.config.ts`, `src/features/auth/password.ts`, `src/features/auth/password.test.ts`
 
 **Interfaces:**
+
 - Produces: `hashPassword(plain: string): Promise<string>`, `verifyPassword(plain: string, hash: string): Promise<boolean>`.
 
 - [ ] **Step 1: 테스트 의존성 설치 + vitest 설정**
@@ -296,7 +322,9 @@ npm i -D vitest vite-tsconfig-paths
 npm i bcryptjs
 npm i -D @types/bcryptjs
 ```
+
 Create `vitest.config.ts`:
+
 ```ts
 import { defineConfig } from 'vitest/config'
 import tsconfigPaths from 'vite-tsconfig-paths'
@@ -310,6 +338,7 @@ export default defineConfig({
 - [ ] **Step 2: 실패하는 테스트 작성**
 
 Create `src/features/auth/password.test.ts`:
+
 ```ts
 import { describe, it, expect } from 'vitest'
 import { hashPassword, verifyPassword } from './password'
@@ -336,6 +365,7 @@ Expected: FAIL — `password` 모듈을 찾을 수 없음.
 - [ ] **Step 4: 최소 구현**
 
 Create `src/features/auth/password.ts`:
+
 ```ts
 import bcrypt from 'bcryptjs'
 
@@ -366,14 +396,17 @@ git commit -m "feat: add password hashing with Vitest setup"
 ### Task 5: 입력 검증 스키마 (TDD, 예제 테스트 2)
 
 **Files:**
+
 - Create: `src/features/auth/validation.ts`, `src/features/auth/validation.test.ts`, `src/features/users/validation.ts`
 
 **Interfaces:**
+
 - Produces: `signupSchema`, `loginSchema`(auth) / `updateProfileSchema`, `changePasswordSchema`(users) zod 스키마.
 
 - [ ] **Step 1: 실패하는 테스트 작성**
 
 Create `src/features/auth/validation.test.ts`:
+
 ```ts
 import { describe, it, expect } from 'vitest'
 import { signupSchema } from './validation'
@@ -404,6 +437,7 @@ Expected: FAIL — `validation` 모듈 없음.
 - [ ] **Step 3: auth 검증 스키마 구현**
 
 Create `src/features/auth/validation.ts`:
+
 ```ts
 import { z } from 'zod'
 
@@ -427,6 +461,7 @@ Expected: PASS (3 passed).
 - [ ] **Step 5: users 검증 스키마 구현**
 
 Create `src/features/users/validation.ts`:
+
 ```ts
 import { z } from 'zod'
 
@@ -452,9 +487,11 @@ git commit -m "feat: add zod validation schemas for auth and users"
 ### Task 6: 세션 (jose JWT 쿠키)
 
 **Files:**
+
 - Create: `src/features/auth/session.ts`
 
 **Interfaces:**
+
 - Consumes: `env`(`@/lib/env`).
 - Produces: `encrypt(payload)`, `decrypt(token?)`, `createSession(userId)`, `getSession()`, `deleteSession()`, 타입 `SessionPayload = { userId: string }`.
 
@@ -467,6 +504,7 @@ npm i jose
 - [ ] **Step 2: session.ts 작성**
 
 Create `src/features/auth/session.ts`:
+
 ```ts
 import 'server-only'
 import { SignJWT, jwtVerify } from 'jose'
@@ -543,15 +581,18 @@ git commit -m "feat: add JWT cookie session helpers"
 ### Task 7: 공용 폼 상태 타입 + 인증 서버 액션
 
 **Files:**
+
 - Create: `src/lib/forms.ts`, `src/features/auth/actions.ts`
 
 **Interfaces:**
+
 - Consumes: `prisma`, `hashPassword`/`verifyPassword`, `createSession`/`deleteSession`, `signupSchema`/`loginSchema`.
 - Produces: 타입 `FormState`; 액션 `signup(prev, formData)`, `login(prev, formData)`, `logout()`.
 
 - [ ] **Step 1: FormState 타입**
 
 Create `src/lib/forms.ts`:
+
 ```ts
 // 모든 폼 서버 액션이 공유하는 반환 타입(useActionState와 함께 사용)
 export type FormState =
@@ -566,6 +607,7 @@ export type FormState =
 - [ ] **Step 2: 인증 액션 작성**
 
 Create `src/features/auth/actions.ts`:
+
 ```ts
 'use server'
 import { redirect } from 'next/navigation'
@@ -635,15 +677,18 @@ git commit -m "feat: add auth server actions (signup/login/logout)"
 ### Task 8: 현재 유저 조회 + 유저 서버 액션
 
 **Files:**
+
 - Create: `src/features/users/queries.ts`, `src/features/users/actions.ts`
 
 **Interfaces:**
+
 - Consumes: `prisma`, `getSession`, `getCurrentUser`, `hashPassword`/`verifyPassword`, `deleteSession`, users 검증 스키마.
 - Produces: `getCurrentUser()`(없으면 null); 액션 `updateProfile(prev, formData)`, `changePassword(prev, formData)`, `deleteAccount()`.
 
 - [ ] **Step 1: queries.ts 작성**
 
 Create `src/features/users/queries.ts`:
+
 ```ts
 import 'server-only'
 import { cache } from 'react'
@@ -664,6 +709,7 @@ export const getCurrentUser = cache(async () => {
 - [ ] **Step 2: actions.ts 작성**
 
 Create `src/features/users/actions.ts`:
+
 ```ts
 'use server'
 import { redirect } from 'next/navigation'
@@ -679,7 +725,9 @@ export async function updateProfile(_prev: FormState, formData: FormData): Promi
   const user = await getCurrentUser()
   if (!user) redirect('/login')
 
-  const parsed = updateProfileSchema.safeParse({ name: (formData.get('name') as string) || undefined })
+  const parsed = updateProfileSchema.safeParse({
+    name: (formData.get('name') as string) || undefined,
+  })
   if (!parsed.success) return { fieldErrors: parsed.error.flatten().fieldErrors }
 
   await prisma.user.update({ where: { id: user.id }, data: { name: parsed.data.name || null } })
@@ -735,14 +783,17 @@ git commit -m "feat: add user queries and profile/password/delete actions"
 ### Task 9: 보호 라우트 미들웨어
 
 **Files:**
+
 - Create: `src/middleware.ts`
 
 **Interfaces:**
+
 - Produces: `/dashboard`, `/settings` 하위 접근 시 세션 쿠키 없으면 `/login`으로 리다이렉트(낙관적 체크). 실제 검증은 보호 레이아웃에서 수행(Task 12).
 
 - [ ] **Step 1: middleware.ts 작성**
 
 Create `src/middleware.ts`:
+
 ```ts
 import { NextResponse, type NextRequest } from 'next/server'
 
@@ -782,14 +833,17 @@ git commit -m "feat: protect dashboard/settings routes via middleware"
 ### Task 10: 공용 UI 프리미티브
 
 **Files:**
+
 - Create: `src/components/ui/Button.tsx`, `Input.tsx`, `Label.tsx`, `FieldError.tsx`
 
 **Interfaces:**
+
 - Produces: `Button`, `Input`, `Label`, `FieldError`(props: `{ messages?: string[] }`) 컴포넌트.
 
 - [ ] **Step 1: Button**
 
 Create `src/components/ui/Button.tsx`:
+
 ```tsx
 import { type ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
@@ -810,6 +864,7 @@ export function Button({ className, ...props }: ComponentProps<'button'>) {
 - [ ] **Step 2: Input**
 
 Create `src/components/ui/Input.tsx`:
+
 ```tsx
 import { type ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
@@ -830,18 +885,22 @@ export function Input({ className, ...props }: ComponentProps<'input'>) {
 - [ ] **Step 3: Label**
 
 Create `src/components/ui/Label.tsx`:
+
 ```tsx
 import { type ComponentProps } from 'react'
 import { cn } from '@/lib/utils'
 
 export function Label({ className, ...props }: ComponentProps<'label'>) {
-  return <label className={cn('mb-1 block text-sm font-medium text-gray-700', className)} {...props} />
+  return (
+    <label className={cn('mb-1 block text-sm font-medium text-gray-700', className)} {...props} />
+  )
 }
 ```
 
 - [ ] **Step 4: FieldError**
 
 Create `src/components/ui/FieldError.tsx`:
+
 ```tsx
 export function FieldError({ messages }: { messages?: string[] }) {
   if (!messages?.length) return null
@@ -852,6 +911,7 @@ export function FieldError({ messages }: { messages?: string[] }) {
 - [ ] **Step 5: 타입체크 + 커밋**
 
 Run: `npx tsc --noEmit` (Expected: 에러 없음)
+
 ```bash
 git add -A
 git commit -m "feat: add UI primitives (Button, Input, Label, FieldError)"
@@ -862,16 +922,19 @@ git commit -m "feat: add UI primitives (Button, Input, Label, FieldError)"
 ### Task 11: 인증 폼 + 인증 페이지
 
 **Files:**
+
 - Create: `src/features/auth/components/LoginForm.tsx`, `SignupForm.tsx`
 - Create: `src/app/(auth)/login/page.tsx`, `src/app/(auth)/signup/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `login`/`signup` 액션, UI 프리미티브.
 - Produces: `/login`, `/signup` 화면.
 
 - [ ] **Step 1: LoginForm**
 
 Create `src/features/auth/components/LoginForm.tsx`:
+
 ```tsx
 'use client'
 import { useActionState } from 'react'
@@ -893,7 +956,13 @@ export function LoginForm() {
       </div>
       <div>
         <Label htmlFor="password">비밀번호</Label>
-        <Input id="password" name="password" type="password" autoComplete="current-password" required />
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+        />
         <FieldError messages={state?.fieldErrors?.password} />
       </div>
       <Button type="submit" disabled={pending} className="w-full">
@@ -907,6 +976,7 @@ export function LoginForm() {
 - [ ] **Step 2: SignupForm**
 
 Create `src/features/auth/components/SignupForm.tsx`:
+
 ```tsx
 'use client'
 import { useActionState } from 'react'
@@ -947,6 +1017,7 @@ export function SignupForm() {
 - [ ] **Step 3: login 페이지**
 
 Create `src/app/(auth)/login/page.tsx`:
+
 ```tsx
 import Link from 'next/link'
 import { LoginForm } from '@/features/auth/components/LoginForm'
@@ -970,6 +1041,7 @@ export default function LoginPage() {
 - [ ] **Step 4: signup 페이지**
 
 Create `src/app/(auth)/signup/page.tsx`:
+
 ```tsx
 import Link from 'next/link'
 import { SignupForm } from '@/features/auth/components/SignupForm'
@@ -993,6 +1065,7 @@ export default function SignupPage() {
 - [ ] **Step 5: 빌드 검증 + 커밋**
 
 Run: `npm run build` (Expected: 에러 없음, /login·/signup 라우트 생성)
+
 ```bash
 git add -A
 git commit -m "feat: add login/signup forms and pages"
@@ -1003,16 +1076,19 @@ git commit -m "feat: add login/signup forms and pages"
 ### Task 12: 루트 레이아웃·홈 + 보호 레이아웃 + 대시보드(Read)
 
 **Files:**
+
 - Modify: `src/app/layout.tsx`, `src/app/page.tsx`
 - Create: `src/app/(protected)/layout.tsx`, `src/app/(protected)/dashboard/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `getCurrentUser`, `logout`, UI 프리미티브.
 - Produces: 홈 화면, 로그인 필요 영역 가드 + 상단 네비(로그아웃), `/dashboard`(내 정보 Read).
 
 - [ ] **Step 1: 루트 레이아웃 메타데이터 정리**
 
 Modify `src/app/layout.tsx` — `metadata`의 title/description을 보일러플레이트에 맞게 바꾼다(폰트/구조는 스캐폴딩 유지).
+
 ```tsx
 export const metadata = {
   title: 'Next.js 보일러플레이트',
@@ -1023,6 +1099,7 @@ export const metadata = {
 - [ ] **Step 2: 홈 페이지**
 
 Modify `src/app/page.tsx` (전체 교체):
+
 ```tsx
 import Link from 'next/link'
 import { getCurrentUser } from '@/features/users/queries'
@@ -1056,6 +1133,7 @@ export default async function HomePage() {
 - [ ] **Step 3: 보호 레이아웃(가드 + 네비)**
 
 Create `src/app/(protected)/layout.tsx`:
+
 ```tsx
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -1072,8 +1150,12 @@ export default async function ProtectedLayout({ children }: { children: React.Re
     <div>
       <nav className="flex items-center justify-between border-b px-6 py-3">
         <div className="flex gap-4 text-sm">
-          <Link href="/dashboard" className="font-medium hover:underline">대시보드</Link>
-          <Link href="/settings" className="font-medium hover:underline">설정</Link>
+          <Link href="/dashboard" className="font-medium hover:underline">
+            대시보드
+          </Link>
+          <Link href="/settings" className="font-medium hover:underline">
+            설정
+          </Link>
         </div>
         <form action={logout}>
           <Button className="bg-gray-700 hover:bg-gray-800">로그아웃</Button>
@@ -1088,6 +1170,7 @@ export default async function ProtectedLayout({ children }: { children: React.Re
 - [ ] **Step 4: 대시보드 페이지(Read)**
 
 Create `src/app/(protected)/dashboard/page.tsx`:
+
 ```tsx
 import { getCurrentUser } from '@/features/users/queries'
 
@@ -1111,6 +1194,7 @@ export default async function DashboardPage() {
 - [ ] **Step 5: 빌드 검증 + 커밋**
 
 Run: `npm run build` (Expected: 에러 없음)
+
 ```bash
 git add -A
 git commit -m "feat: add home, protected layout guard, and dashboard"
@@ -1121,16 +1205,19 @@ git commit -m "feat: add home, protected layout guard, and dashboard"
 ### Task 13: 설정 화면 (Update / Delete)
 
 **Files:**
+
 - Create: `src/features/users/components/ProfileForm.tsx`, `ChangePasswordForm.tsx`, `DeleteAccountButton.tsx`
 - Create: `src/app/(protected)/settings/page.tsx`
 
 **Interfaces:**
+
 - Consumes: `updateProfile`/`changePassword`/`deleteAccount` 액션, `getCurrentUser`, UI 프리미티브.
 - Produces: `/settings`(이름 수정·비번 변경·회원 탈퇴).
 
 - [ ] **Step 1: ProfileForm**
 
 Create `src/features/users/components/ProfileForm.tsx`:
+
 ```tsx
 'use client'
 import { useActionState } from 'react'
@@ -1161,6 +1248,7 @@ export function ProfileForm({ defaultName }: { defaultName: string }) {
 - [ ] **Step 2: ChangePasswordForm**
 
 Create `src/features/users/components/ChangePasswordForm.tsx`:
+
 ```tsx
 'use client'
 import { useActionState } from 'react'
@@ -1177,12 +1265,24 @@ export function ChangePasswordForm() {
       {state?.success && <p className="text-sm text-green-600">{state.success}</p>}
       <div>
         <Label htmlFor="currentPassword">현재 비밀번호</Label>
-        <Input id="currentPassword" name="currentPassword" type="password" autoComplete="current-password" required />
+        <Input
+          id="currentPassword"
+          name="currentPassword"
+          type="password"
+          autoComplete="current-password"
+          required
+        />
         <FieldError messages={state?.fieldErrors?.currentPassword} />
       </div>
       <div>
         <Label htmlFor="newPassword">새 비밀번호 (8자 이상)</Label>
-        <Input id="newPassword" name="newPassword" type="password" autoComplete="new-password" required />
+        <Input
+          id="newPassword"
+          name="newPassword"
+          type="password"
+          autoComplete="new-password"
+          required
+        />
         <FieldError messages={state?.fieldErrors?.newPassword} />
       </div>
       <Button type="submit" disabled={pending}>
@@ -1196,6 +1296,7 @@ export function ChangePasswordForm() {
 - [ ] **Step 3: DeleteAccountButton**
 
 Create `src/features/users/components/DeleteAccountButton.tsx`:
+
 ```tsx
 'use client'
 import { deleteAccount } from '../actions'
@@ -1220,6 +1321,7 @@ export function DeleteAccountButton() {
 - [ ] **Step 4: settings 페이지**
 
 Create `src/app/(protected)/settings/page.tsx`:
+
 ```tsx
 import { getCurrentUser } from '@/features/users/queries'
 import { ProfileForm } from '@/features/users/components/ProfileForm'
@@ -1254,6 +1356,7 @@ export default async function SettingsPage() {
 - [ ] **Step 5: 빌드 검증 + 커밋**
 
 Run: `npm run build` (Expected: 에러 없음)
+
 ```bash
 git add -A
 git commit -m "feat: add settings page (update profile, change password, delete account)"
@@ -1266,15 +1369,18 @@ git commit -m "feat: add settings page (update profile, change password, delete 
 ### Task 14: 시드 데이터 + 로그인 E2E 검증
 
 **Files:**
+
 - Create: `prisma/seed.ts`
 
 **Interfaces:**
+
 - Consumes: Prisma, bcryptjs.
 - Produces: 데모 유저(`demo@example.com` / `password123`), `npm run db:seed` 동작.
 
 - [ ] **Step 1: seed.ts 작성**
 
 Create `prisma/seed.ts`:
+
 ```ts
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
@@ -1308,6 +1414,7 @@ Expected: "데모 유저 준비 완료" 출력.
 - [ ] **Step 3: 수동 E2E 검증(개발 서버)**
 
 Run: `npm run dev` (별도 터미널), 브라우저로 확인:
+
 - `/signup`에서 새 계정 생성 → `/dashboard`로 이동되나? (Create)
 - 로그아웃 후 `/login`에서 `demo@example.com` / `password123` 로그인 → 대시보드 표시? (Read)
 - `/settings`에서 이름 변경 → "저장되었습니다" + 대시보드 반영? (Update)
@@ -1328,14 +1435,17 @@ git commit -m "feat: add demo user seed"
 ### Task 15: README (초보자 가이드)
 
 **Files:**
+
 - Modify: `README.md`(스캐폴딩 생성본 전체 교체)
 
 **Interfaces:**
+
 - Produces: 초보자가 따라할 수 있는 한국어 시작/구조/확장 가이드.
 
 - [ ] **Step 1: README 작성**
 
 `README.md`를 아래 내용으로 교체:
+
 ```markdown
 # Next.js 보일러플레이트
 
@@ -1345,10 +1455,10 @@ git commit -m "feat: add demo user seed"
 
 \`\`\`bash
 npm install
-cp .env.example .env      # Windows: copy .env.example .env
-npm run db:push           # DB(SQLite) 만들기
-npm run db:seed           # 데모 계정 넣기
-npm run dev               # http://localhost:3000
+cp .env.example .env # Windows: copy .env.example .env
+npm run db:push # DB(SQLite) 만들기
+npm run db:seed # 데모 계정 넣기
+npm run dev # http://localhost:3000
 \`\`\`
 
 데모 계정: **demo@example.com / password123**
@@ -1381,13 +1491,13 @@ npm run dev               # http://localhost:3000
 
 ## 자주 쓰는 명령어
 
-| 명령 | 설명 |
-|---|---|
-| \`npm run dev\` | 개발 서버 |
-| \`npm run build\` | 프로덕션 빌드 |
-| \`npm run test\` | 테스트 |
-| \`npm run db:studio\` | DB GUI |
-| \`npm run db:reset\` | DB 초기화 후 재시드 |
+| 명령                  | 설명                |
+| --------------------- | ------------------- |
+| \`npm run dev\`       | 개발 서버           |
+| \`npm run build\`     | 프로덕션 빌드       |
+| \`npm run test\`      | 테스트              |
+| \`npm run db:studio\` | DB GUI              |
+| \`npm run db:reset\`  | DB 초기화 후 재시드 |
 
 ## 배포 시 주의
 
@@ -1395,7 +1505,7 @@ npm run dev               # http://localhost:3000
 - DB를 Postgres로 바꾸려면 \`schema.prisma\`의 \`provider\`를 \`postgresql\`로, \`DATABASE_URL\`을 Postgres 주소로 변경 후 \`npm run db:push\`
 ```
 
-(위 본문의 `\`\`\`` 및 `\`` 이스케이프는 실제 파일에선 보통의 백틱으로 작성한다.)
+(위 본문의 `\`\`\``및`\`` 이스케이프는 실제 파일에선 보통의 백틱으로 작성한다.)
 
 - [ ] **Step 2: 커밋**
 
