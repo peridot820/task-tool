@@ -1,3 +1,7 @@
+# Slack 동작 화면
+<img width="1807" height="960" alt="image" src="https://github.com/user-attachments/assets/7aade22f-bc0c-493a-87af-1679eb7ee7ba" />
+
+
 # Task Tool
 
 개인용 업무 관리 툴입니다. 이메일/비밀번호 로그인, Prisma(SQLite), 기능별 폴더 구조가 들어있어요.
@@ -11,8 +15,6 @@ npm run db:push # DB(SQLite) 만들기
 npm run db:seed # 데모 계정과 업무 샘플 넣기
 npm run dev # http://localhost:3000
 ```
-
-데모 계정: **demo@example.com / password123**
 
 > 운영 배포 전 `.env`의 `SESSION_SECRET`을 긴 랜덤값으로 바꾸세요.
 > 예: `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`
