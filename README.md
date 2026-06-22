@@ -1,6 +1,6 @@
-# Next.js 보일러플레이트
+# Task Tool
 
-초보자용 풀스택 스타터. 이메일/비밀번호 인증 + Prisma(SQLite) + 기능별 폴더 구조가 들어있어요.
+개인용 업무 관리 툴입니다. 이메일/비밀번호 로그인, Prisma(SQLite), 기능별 폴더 구조가 들어있어요.
 
 ## 빠른 시작
 
@@ -8,7 +8,7 @@
 npm install
 cp .env.example .env # Windows: copy .env.example .env
 npm run db:push # DB(SQLite) 만들기
-npm run db:seed # 데모 계정 넣기
+npm run db:seed # 데모 계정과 업무 샘플 넣기
 npm run dev # http://localhost:3000
 ```
 
@@ -23,7 +23,14 @@ npm run dev # http://localhost:3000
 - `src/features/<도메인>` — 기능별 로직(서버 액션·검증·세션·조회·컴포넌트)
 - `src/components/ui` — 공용 UI(Button/Input/…)
 - `src/lib` — 공용 인프라(prisma·env·utils·forms)
-- `prisma` — DB 스키마(User 하나)와 시드
+- `prisma` — DB 스키마(User + Task)와 시드
+
+## 지금 들어있는 기능
+
+- 로그인 / 회원가입
+- 개인 업무 추가, 상태 변경, 수정, 삭제
+- 상태별 대시보드와 상세 편집 화면
+- 데모 업무 시드
 
 ## 로그인은 어떻게 동작하나
 
@@ -34,10 +41,10 @@ npm run dev # http://localhost:3000
 
 관련 파일: `src/features/auth/`(actions·session·password·validation), `src/proxy.ts`
 
-## 새 기능/모델 추가하는 법 (예: 게시글)
+## 새 기능/모델 추가하는 법
 
-1. `prisma/schema.prisma`에 `Post` 모델 추가 → `npm run db:push`
-2. `src/features/posts/` 폴더 생성: `actions.ts`·`queries.ts`·`validation.ts`·`components/`
+1. `prisma/schema.prisma`에 모델 추가 → `npm run db:push`
+2. `src/features/<도메인>/` 폴더 생성: `actions.ts`·`queries.ts`·`validation.ts`·`components/`
 3. `src/app`에 화면 추가(로직은 features에서 import)
 
 ## 자주 쓰는 명령어
@@ -54,3 +61,34 @@ npm run dev # http://localhost:3000
 
 - `SESSION_SECRET`을 반드시 교체
 - DB를 Postgres로 바꾸려면 `schema.prisma`의 `provider`를 `postgresql`로, `DATABASE_URL`을 Postgres 주소로 변경 후 `npm run db:push`
+## Slack 봇 연동
+
+슬랙에서 `@task-tool`로 멘션하면 봇이 이 앱의 작업 데이터를 읽고 쓸 수 있습니다.
+
+필요한 환경변수:
+
+- `SLACK_SIGNING_SECRET`
+- `SLACK_BOT_TOKEN`
+- `SLACK_DEFAULT_TASK_OWNER_EMAIL`
+
+명령 예시:
+
+```text
+@task-tool help
+@task-tool list done
+@task-tool show <taskId>
+@task-tool create 새 로그인 점검 | priority=high | due=2026-06-30
+@task-tool done <taskId>
+```
+
+## Slack / Claude 연동
+
+슬랙 멘션 봇은 아래 환경변수를 사용합니다.
+
+- `SLACK_BOT_TOKEN`
+- `SLACK_SIGNING_SECRET`
+- `SLACK_DEFAULT_USER_EMAIL`
+- `ANTHROPIC_API_KEY`
+- `ANTHROPIC_MODEL`
+
+기본 모델은 `claude-sonnet-4-5`로 두고, 필요하면 `.env`에서 바꿀 수 있습니다.

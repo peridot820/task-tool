@@ -1,4 +1,5 @@
 import 'server-only'
+
 import { cache } from 'react'
 import { prisma } from '@/lib/prisma'
 import { getSession } from '@/features/auth/session'
@@ -12,3 +13,10 @@ export const getCurrentUser = cache(async () => {
     select: { id: true, email: true, name: true, createdAt: true },
   })
 })
+
+export async function getUserByEmail(email: string) {
+  return prisma.user.findUnique({
+    where: { email },
+    select: { id: true, email: true, name: true, createdAt: true },
+  })
+}
