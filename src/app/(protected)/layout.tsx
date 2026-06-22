@@ -10,19 +10,26 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   if (!user) redirect('/login')
 
   return (
-    <div>
-      <nav className="flex items-center justify-between border-b px-6 py-3">
-        <div className="flex gap-4 text-sm">
-          <Link href="/dashboard" className="font-medium hover:underline">
-            대시보드
-          </Link>
-          <Link href="/settings" className="font-medium hover:underline">
-            설정
-          </Link>
+    <div className="min-h-screen">
+      <nav className="sticky top-0 z-10 border-b border-slate-200/80 bg-[rgba(247,244,238,0.9)] backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-6">
+            <Link href="/dashboard" className="text-sm font-semibold tracking-wide text-slate-950">
+              Task Tool
+            </Link>
+            <div className="flex gap-4 text-sm text-slate-600">
+              <Link href="/dashboard" className="font-medium hover:text-slate-950">
+                업무판
+              </Link>
+              <Link href="/settings" className="font-medium hover:text-slate-950">
+                설정
+              </Link>
+            </div>
+          </div>
+          <form action={logout}>
+            <Button className="bg-slate-900 hover:bg-slate-800">로그아웃</Button>
+          </form>
         </div>
-        <form action={logout}>
-          <Button className="bg-gray-700 hover:bg-gray-800">로그아웃</Button>
-        </form>
       </nav>
       {children}
     </div>
